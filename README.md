@@ -32,6 +32,22 @@ configuration guide (`README.md`) for recreating a Vivado project for one design
 `constraints/kernel_clk_125mhz.xdc` provides the 125 MHz clock constraint used
 for the reported kernel timing runs.
 
+`uart_fi/` contains the on-board UART fault-injection chain used by the
+manuscript's board-level campaign: the UART command path
+(`uart_rx_simple` → `uart_cmd_decoder` → `fi_controller`, an ARM/FIRE scheme),
+the two injection points (`mem_bitflip_v1` for the feedback-memory read port and
+`bf_out_bitflip_v1` for butterfly outputs), and the per-kernel wrappers
+(`wrap/{S1,S2,S3,P1,P2}/`). Injection is a single-cycle one-bit flip issued by
+the host at the target cycle, synchronized to frame start; the `trig_mode` /
+`trig_count` frame fields are reserved and unused. Note: no injection wrapper
+exists (or is needed) for the unprotected S0/P0 baselines.
+
+**Threshold note (RTL defaults vs. reported values).** The `THRESHOLD`
+parameters compiled into the kernels (S3=4, P1=8, S1=16) are a conservative
+power-of-two calibration. The recovery rates reported in the manuscript use the
+3σ-calibrated values **S3=2, P1=3, S1=5** (raw-syndrome LSB units); override the
+parameter to reproduce the reported campaign.
+
 `schematic/` contains:
 
 - Manuscript architecture / protection / platform figures
@@ -65,8 +81,8 @@ set_false_path -from [get_ports rst]
 # What is intentionally not included
 
 - Full Vivado `.xpr` / `.runs` / bitstream packages
-- UART / FI functional-simulation project trees
-- Python campaign scripts and injection logs
+- iverilog simulation testbenches, fault-site lists, and Python campaign
+  scripts / logs (the `uart_fi/` on-board injection chain **is** included)
 
 (Same delivery scope as typical TCAS-I companion RTL releases.)
 
