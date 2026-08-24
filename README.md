@@ -48,17 +48,12 @@ power-of-two calibration. The recovery rates reported in the manuscript use the
 3σ-calibrated values **S3=2, P1=3, S1=5** (raw-syndrome LSB units); override the
 parameter to reproduce the reported campaign.
 
-`schematic/` contains:
-
-- Manuscript architecture / protection / platform figures
-- `ROM_FI_shell_Vivado_schematics.pdf` — optional Vivado elaborated schematics of a
-  **local ROM-fed fault-injection demonstration shell** (UART used only for ARM/FIRE;
-  on-chip ROM feeds DUT stimulus). This PDF is a companion illustration; it is **not**
-  a paper fair-kernel resource top. Do **not** treat pin counts or utilization from that
-  shell as manuscript resource numbers. The authoritative RTL for utilization / timing /
-  power regeneration remains the seven `*_src` kernels above.
-
-The same PDF is also placed at the repository root for convenience.
+`schematic/Vivado_schematics.pdf` is an optional Vivado elaborated schematic of a
+**local ROM-fed fault-injection demonstration shell** (UART used only for ARM/FIRE;
+on-chip ROM feeds DUT stimulus). It is a companion illustration, **not** a paper
+fair-kernel resource top. Do **not** treat pin counts or utilization from that
+shell as manuscript resource numbers. The authoritative RTL for utilization /
+timing / power regeneration remains the seven `*_src` kernels above.
 
 # Generation of Utilization & Power report
 
