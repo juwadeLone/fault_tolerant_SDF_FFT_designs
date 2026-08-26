@@ -41,6 +41,11 @@ explicitly by CI.
 | `subfft_stage10` | `tb_subfft_stage10.sv` |
 | `pfft_stage10` | `tb_pfft_stage10.sv` |
 
+`mem_bitflip_v1` exposes a six-bit `bit_index`, so injection can address only
+bits 0 through 63 of a 78-bit word. The testbench sweeps all 64 reachable
+indices and pins the upper 14 bits as unreachable. This is an RTL interface
+limitation, not a testbench defect.
+
 The following remain intentionally untested in this unit-test pass:
 kernel tops (`top_*_kernel.sv`), `datapath_v5.sv`, `ecc_stage4_v5.sv`,
 `complete_butterfly_ecc_v1.sv`, `independent_*_v5`, SDF lane/stage modules
@@ -70,13 +75,5 @@ The XFAIL reason is:
 `uart_cmd_decoder frame_buf off-by-one: payload byte k stored at
 frame_buf[k-1]; checksum compared against stale frame_buf[10]`
 
-The WIDTH=70 out-of-range checks in `tb_mem_bitflip_v1.sv` are XFAILs because
-Icarus 11/13 wraps the shift count in `WIDTH'(1)<<bit_index`. Per LRM the mask
-is zero for bit indices 70 through 77, so Vivado zero-extends and the RTL is
-correct. This XFAIL documents a simulator limitation, not an RTL defect:
-
-`Icarus 11/13 wraps the shift count in WIDTH'(1)<<bit_index; per LRM the mask
-is zero for bit_index >= WIDTH, so Vivado zero-extends and the RTL is correct`
-
-An XPASS is a hard failure so that a future simulator fix promotes the
+An XPASS is a hard failure so that a future decoder correction promotes the
 affected expectation to an ordinary check.
