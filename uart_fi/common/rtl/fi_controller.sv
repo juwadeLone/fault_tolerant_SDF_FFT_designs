@@ -39,8 +39,10 @@ module fi_controller (
             last_site <= 8'h00;
         end else begin
             fire_pulse <= 1'b0;
-            if (frame_bad)
+            if (frame_bad) begin
                 bad_cmd <= 1'b1;
+                status_code <= ST_BAD;
+            end
 
             if (frame_valid) begin
                 case (opcode)
@@ -81,7 +83,11 @@ module fi_controller (
                     OPC_STATUS: begin
                         status_code <= fired ? ST_FIRED : (armed ? ST_ARMED : (bad_cmd ? ST_BAD : ST_IDLE));
                     end
-                    default: ;
+                    OPC_NOP: ;
+                    default: begin
+                        bad_cmd <= 1'b1;
+                        status_code <= ST_BAD;
+                    end
                 endcase
             end
         end
