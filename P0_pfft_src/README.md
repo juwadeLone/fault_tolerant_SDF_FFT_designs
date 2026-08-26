@@ -8,8 +8,15 @@ Unprotected PFFT baseline without the large frame buffer (paper resource / timin
 
 ## Source files (add all to the Vivado project)
 
+The full list is also machine-readable in `../common/filelists/P0.f` (relative to that directory), e.g. `read_verilog -sv [...]` from a Tcl script.
+
+In this directory (`P0_pfft_src/`):
+
 - `top_p0_kernel.sv`
-- `datapath_v5.sv`
+
+Shared with the other designs, in `../common/rtl/`:
+
+- `datapath_pfft_v5.sv`
 - `fft_common.sv`
 - `twiddle_rom_1024.sv`
 
