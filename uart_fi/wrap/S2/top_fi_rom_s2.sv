@@ -13,7 +13,7 @@ module top_fi_rom_s2 (
 );
     localparam integer DEPTH  = 256;
     localparam integer ADDR_W = 8;
-    localparam INIT_FILE = "S2_input.mem"  // stimulus image: generate/supply it yourself, see uart_fi/README.md;
+    localparam INIT_FILE = "S2_input.mem";  // stimulus image: generate/supply it yourself, see uart_fi/README.md
 
     wire                in_valid, in_last;
     wire signed [34:0]  in0_re, in0_im, in1_re, in1_im, in2_re, in2_im, in3_re, in3_im;
@@ -24,6 +24,7 @@ module top_fi_rom_s2 (
 
     wire        frame_valid, frame_bad;
     wire        uart_byte_ready;
+    wire        uart_frame_err;
     wire [7:0]  uart_rx_byte;
     wire [7:0]  opcode, site, stage_id, sel, component, bit_index, trig_mode;
     wire [15:0] trig_count;
@@ -53,7 +54,7 @@ module top_fi_rom_s2 (
 
     uart_rx_simple #(.CLKS_PER_BIT(16)) u_uart (
         .clk(clk), .rst(rst), .rx(uart_rx),
-        .byte_ready(uart_byte_ready), .rx_byte(uart_rx_byte)
+        .byte_ready(uart_byte_ready), .rx_byte(uart_rx_byte), .frame_err(uart_frame_err)
     );
 
     uart_cmd_decoder u_dec (
@@ -68,7 +69,7 @@ module top_fi_rom_s2 (
         .clk(clk), .rst(rst),
         .frame_valid(frame_valid), .opcode(opcode), .site(site),
         .stage_id(stage_id), .sel(sel), .component(component), .bit_index(bit_index),
-        .trig_mode(trig_mode), .trig_count(trig_count), .frame_bad(frame_bad),
+        .trig_mode(trig_mode), .trig_count(trig_count), .frame_bad(frame_bad | uart_frame_err),
         .armed(fi_armed), .fired(fi_fired), .last_site(last_site), .bad_cmd(bad_cmd),
         .arm_stage_id(arm_stage_id), .arm_sel(arm_sel), .arm_component(arm_component),
         .arm_bit(arm_bit), .arm_site_mem(arm_site_mem), .fire_pulse(fire_pulse),

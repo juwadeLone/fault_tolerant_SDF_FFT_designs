@@ -16,6 +16,7 @@ module top_fi_s2 (
 );
     wire        frame_valid, frame_bad;
     wire        uart_byte_ready, tb_uart_strobe;
+    wire        uart_frame_err;
     wire [7:0]  uart_rx_byte, tb_uart_byte;
     wire        dec_byte_ready;
     wire [7:0]  dec_rx_byte;
@@ -41,7 +42,8 @@ module top_fi_s2 (
     wire        bad_cmd;
 
     uart_rx_simple #(.CLKS_PER_BIT(16)) u_uart (
-        .clk(clk), .rst(rst), .rx(uart_rx), .byte_ready(uart_byte_ready), .rx_byte(uart_rx_byte)
+        .clk(clk), .rst(rst), .rx(uart_rx), .byte_ready(uart_byte_ready), .rx_byte(uart_rx_byte),
+        .frame_err(uart_frame_err)
     );
 
     assign dec_byte_ready = tb_uart_strobe | uart_byte_ready;
@@ -74,7 +76,7 @@ module top_fi_s2 (
     assign fi_bit_index = tb_cmd_valid ? tb_bit_index : bit_index;
     assign fi_trig_mode = tb_cmd_valid ? tb_trig_mode : trig_mode;
     assign fi_trig_count = tb_cmd_valid ? tb_trig_count : trig_count;
-    assign fi_frame_bad = tb_cmd_valid ? tb_frame_bad : frame_bad;
+    assign fi_frame_bad = tb_cmd_valid ? tb_frame_bad : (frame_bad | uart_frame_err);
 
     initial begin
         force tb_cmd_valid = 1'b0;

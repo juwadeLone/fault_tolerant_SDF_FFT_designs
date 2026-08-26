@@ -44,7 +44,7 @@ module uart_cmd_decoder (
                 if (!collecting) begin
                     if (rx_byte == PREAMBLE) begin
                         collecting <= 1'b1;
-                        idx <= 4'd0;
+                        idx <= 4'd1;
                         frame_buf[0] <= rx_byte;
                     end
                 end else begin
@@ -52,7 +52,7 @@ module uart_cmd_decoder (
                     frame_buf[idx] <= rx_byte;
                     if (idx == 4'd10) begin
                         collecting <= 1'b0;
-                        if (xor_checksum(frame_buf) == frame_buf[10]) begin
+                        if (xor_checksum(frame_buf) == rx_byte) begin
                             opcode <= frame_buf[1];
                             site <= frame_buf[2];
                             stage_id <= frame_buf[3];
