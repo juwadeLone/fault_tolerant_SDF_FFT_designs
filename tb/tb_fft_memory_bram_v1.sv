@@ -13,7 +13,21 @@ initial begin clk=0;rd_en128=0;rd_en64=0;wr_en=0;ra128=0;ra64=0;wa128=0;wa64=0;w
  for(i=0;i<64;i=i+1) begin model64[i]=({$random,$random,$random});model[i]=model64[i];write128(i,model64[i]);end
  for(i=0;i<128;i=i+1) begin @(negedge clk);ra128=i;rd_en128=1;@(posedge clk);#0.1;`TB_CHECK_EQ(out128,model[i],"sync readback");end
  @(negedge clk);rd_en128=0;ra128=5;@(posedge clk);#0.1;`TB_CHECK_EQ(out128,model[127],"sync rd_en hold");
- @(negedge clk);ra128=7;wd=70'h123;wa128=7;wr_en=1;rd_en128=1;@(posedge clk);#0.1;/* Empirically this behavioral model returns the old word on same-cycle read/write. */`TB_CHECK_EQ(out128,model[7],"sync same-cycle read old data"); @(negedge clk);wr_en=0;rd_en128=1;@(posedge clk);#0.1;`TB_CHECK_EQ(out128,70'h123,"sync write visible next read"); write128(63,model64[63]);
+ @(negedge clk);ra128=7;wd=70'h123;wa128=7;wr_en=1;rd_en128=1;@(posedge clk);#0.1;/* Empirically this behavioral model returns the old word on same-cycle read/write. */`TB_CHECK_EQ(out128,model[7],"sync same-cycle read old data"); model[7]=70'h123; @(negedge clk);wr_en=0;rd_en128=1;@(posedge clk);#0.1;`TB_CHECK_EQ(out128,70'h123,"sync write visible next read"); write128(63,model64[63]);
  for(i=0;i<64;i=i+1) begin @(negedge clk);ra64=i;rd_en64=1;@(posedge clk);#0.1;`TB_CHECK_EQ(out64,model64[i],"async readback");end
- @(negedge clk);ra64=7;rd_en64=1;pulse=1;bit_index=3;@(posedge clk);#0.1;`TB_CHECK_EQ(out64,model64[7]^(70'd1<<3),"FI flip");pulse=0;#0.1;`TB_CHECK_EQ(out64,model64[7],"FI does not alter storage");`TB_FINISH;end
+ @(negedge clk);ra64=7;rd_en64=1;pulse=1;bit_index=3;@(posedge clk);#0.1;`TB_CHECK_EQ(out64,model64[7]^(70'd1<<3),"async FI flip");pulse=0;#0.1;`TB_CHECK_EQ(out64,model64[7],"async FI does not alter storage");
+ for(i=0;i<4;i=i+1) begin
+  case(i)
+   0: bit_index=0;
+   1: bit_index=1;
+   2: bit_index=31;
+   default: bit_index=63;
+  endcase
+  @(negedge clk);ra128=7;rd_en128=1;pulse=1;
+  @(posedge clk);#0.1;
+  `TB_CHECK_EQ(out128,model[7]^(70'd1<<bit_index),"sync FI flip")
+  pulse=0;#0.1;
+  `TB_CHECK_EQ(out128,model[7],"sync FI does not alter storage")
+ end
+ `TB_FINISH;end
 endmodule

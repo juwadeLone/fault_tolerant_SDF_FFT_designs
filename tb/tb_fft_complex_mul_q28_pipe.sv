@@ -37,6 +37,31 @@ initial begin
  @(posedge clk);
  #0.1;
  `TB_CHECK(!valid_out&&orr==0&&oi==0,"pipe reset clear")
+ rst=0;
+ pv=0;
+ for(i=0;i<12;i=i+1) begin
+  @(negedge clk);
+  valid_in=(i%3)!=1;
+  ir=(i+1)*123456;
+  ii=-((i+2)*654321);
+  exponent=i*37;
+  pr[0]=ref_r;
+  pi[0]=ref_i;
+  @(posedge clk);
+  pv[0]<=valid_in;
+  pv[1]<=pv[0];
+  pv[2]<=pv[1];
+  pr[1]<=pr[0];
+  pi[1]<=pi[0];
+  pr[2]<=pr[1];
+  pi[2]<=pi[1];
+  #0.1;
+  `TB_CHECK(valid_out==pv[2],"pipe post-reset valid recovery")
+  if(valid_out) begin
+   `TB_CHECK_EQ(orr,pr[2],"pipe post-reset re equivalence")
+   `TB_CHECK_EQ(oi,pi[2],"pipe post-reset im equivalence")
+  end
+ end
  `TB_FINISH;
 end
 endmodule

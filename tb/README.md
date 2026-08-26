@@ -6,15 +6,17 @@ Run the default suite with:
 make -C tb dup-check lint all
 ```
 
-The suite uses Icarus Verilog with `-g2012` and `vvp`; Verilator is used for
-syntax linting. The system Icarus 11.0 cannot parse
-`uart_cmd_decoder.sv` because of its unpacked-array function formal. A newer
-Icarus v13 build was completed at
-`/home/ubuntu/iverilog-v13-install/bin/iverilog`, but it still reports that
-unpacked-array subroutine ports are unsupported during elaboration. Therefore
-the decoder test remains available as `make -C tb cmd-decoder` and is skipped
-when the selected Icarus is older than 12 or lacks that feature. The decoder
-is linted by Verilator in the default lint target.
+The default suite uses Icarus Verilog with `-g2012` and `vvp`; Verilator is
+used for syntax linting. The decoder's unpacked-array function formal is not
+elaborated by the supported Icarus versions, so `uart_cmd_decoder` is tested
+through the Verilator/C++ harness with:
+
+```sh
+make -C tb cmd-decoder
+```
+
+The decoder target is separate from the default Icarus suite and is also run
+explicitly by CI.
 
 ## Coverage
 
@@ -23,7 +25,7 @@ is linted by Verilator in the default lint target.
 | `mem_bitflip_v1` | `tb_mem_bitflip_v1.sv` |
 | `bf_out_bitflip_v1` | `tb_bf_out_bitflip_v1.sv` |
 | `uart_rx_simple` | `tb_uart_rx_simple.sv` |
-| `uart_cmd_decoder` | `tb_uart_cmd_decoder.sv` (`cmd-decoder` only) |
+| `uart_cmd_decoder` | `verilator/uart_cmd_decoder/sim_main.cpp` (`cmd-decoder` only) |
 | `fi_controller` | `tb_fi_controller.sv` |
 | `fft_memory_bram_v1` | `tb_fft_memory_bram_v1.sv` |
 | `stim_rom` | `tb_stim_rom.sv` |
@@ -45,25 +47,36 @@ kernel tops (`top_*_kernel.sv`), `datapath_v5.sv`, `ecc_stage4_v5.sv`,
 with 128-deep delay lines, and the `uart_fi/wrap/*` wrappers. These require
 full-frame FFT reference models or long simulations.
 
-The stage-10 RTL tests empirically observe output valid/data one clock edge
-after the input is sampled (the RTL contains the `v1`/output register pair);
-the testbench checks that implemented timing and also checks bubble holding and
-the arithmetic right-shift behavior.
+The stage-10 RTL tests check the two-edge output latency, bubble holding, and
+arithmetic right-shift behavior.
 
 ## Expected failures
 
-The decoder's intended-protocol checks are XFAILs documenting the existing
-RTL defect:
+The decoder harness ports junk-before-preamble, valid and bad-checksum
+frames, back-to-back frames, reset in the middle of a frame, and byte gaps.
+Its intended-protocol checks are XFAILs, while regression-lock checks capture
+the current RTL behavior. Empirically, after `A5`, payload byte `k` is stored
+in `frame_buf[k-1]`: the first payload overwrites the preamble, and the
+eleventh byte after the preamble is needed to reach `idx == 10`. The compare
+then reads `frame_buf[10]` in the same nonblocking-assignment cycle, so the
+new byte is stale/`X`. In the harness sequence the delayed twelfth byte first
+produces `frame_bad`; after reset does not clear the buffer, a later corrupted
+frame can instead produce `frame_valid` when the stale value happens to match.
+Reset discards a partial frame, and bytes after the delayed error are ignored
+until a new preamble.
+
+The XFAIL reason is:
 
 `uart_cmd_decoder frame_buf off-by-one: payload byte k stored at
 frame_buf[k-1]; checksum compared against stale frame_buf[10]`
 
 The WIDTH=70 out-of-range checks in `tb_mem_bitflip_v1.sv` are XFAILs because
-the current RTL's sized shift wraps the shift count instead of producing the
-zero mask expected for bit indices 70 through 77:
+Icarus 11/13 wraps the shift count in `WIDTH'(1)<<bit_index`. Per LRM the mask
+is zero for bit indices 70 through 77, so Vivado zero-extends and the RTL is
+correct. This XFAIL documents a simulator limitation, not an RTL defect:
 
-`mem_bitflip_v1 WIDTH'(1) shift wraps the shift count instead of producing a
-zero mask`
+`Icarus 11/13 wraps the shift count in WIDTH'(1)<<bit_index; per LRM the mask
+is zero for bit_index >= WIDTH, so Vivado zero-extends and the RTL is correct`
 
-An XPASS is a hard failure so that a future RTL fix promotes the affected
-expectation to an ordinary check.
+An XPASS is a hard failure so that a future simulator fix promotes the
+affected expectation to an ordinary check.

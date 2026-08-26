@@ -39,15 +39,22 @@ initial begin
  repeat(2) @(posedge clk);
  rst=0;
  @(negedge clk);
- valid_in=1; last_in=0; a0=10; a1=20; a2=30; a3=40;
+ valid_in=1; last_in=1; a0=10; a1=20; a2=30; a3=40;
  @(posedge clk);
  #0.1;
  `TB_CHECK(!valid_out,"pfft stage first edge latency")
  @(negedge clk);
- valid_in=0;
+ valid_in=0; last_in=0;
  @(posedge clk);
  #0.1;
- `TB_XCHECK(!valid_out,"pfft stage intended two-edge latency","pfft_stage10 emits valid one edge after sampling, not after two edges")
+ `TB_CHECK(valid_out&&last_out,"pfft stage second edge latency")
+ `TB_CHECK_EQ(o0,15,"pfft stage two-edge o0")
+ `TB_CHECK_EQ(o1,-5,"pfft stage two-edge o1")
+ `TB_CHECK_EQ(o2,35,"pfft stage two-edge o2")
+ `TB_CHECK_EQ(o3,-5,"pfft stage two-edge o3")
+ @(posedge clk);
+ #0.1;
+ `TB_CHECK(!valid_out&&!last_out,"pfft stage single-beat completion")
  a0=-1; a1=-2; a2=0; a3=0; valid_in=1; last_in=1;
  @(posedge clk);
  @(posedge clk);

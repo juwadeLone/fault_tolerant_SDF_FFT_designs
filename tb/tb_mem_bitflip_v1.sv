@@ -13,7 +13,7 @@ initial begin
  for (i=0;i<50;i=i+1) begin c78={$random,$random,$random}; c70={$random,$random,$random}; bit_index=i%78; #1; `TB_CHECK_EQ(o78,c78,"WIDTH=78 clean"); `TB_CHECK_EQ(o70,c70,"WIDTH=70 clean"); end
  for (j=0;j<3;j=j+1) begin c78={$random,$random,$random}; c70={$random,$random,$random}; pulse=1;
   for (i=0;i<64;i=i+1) begin bit_index=i; #1; mask78=78'd1<<i; mask70=70'd1<<i; `TB_CHECK_EQ(o78,c78^mask78,"WIDTH=78 one-bit flip"); if (i<70) `TB_CHECK_EQ(o70,c70^mask70,"WIDTH=70 one-bit flip"); end
-  for (i=70;i<78;i=i+1) begin bit_index=i; #1; `TB_XCHECK(o70==c70,"WIDTH=70 out-of-range truncates","mem_bitflip_v1 WIDTH'(1) shift wraps the shift count instead of producing a zero mask"); end
+ for (i=70;i<78;i=i+1) begin bit_index=i; #1; `TB_XCHECK(o70==c70,"WIDTH=70 out-of-range truncates","Icarus 11/13 wraps the shift count in WIDTH'(1)<<bit_index; per LRM the mask is zero for bit_index >= WIDTH, so Vivado zero-extends and the RTL is correct"); end
  end
  `TB_FINISH;
 end
