@@ -29,6 +29,14 @@ configuration guide (`README.md`) for recreating a Vivado project for one design
 - `P1_pfft_src`: PFFT per-stage ECC (top: `top_p1_pfft_ecc`; τ=8)
 - `P2_pfft_src`: PFFT TMR, no frame buffer (top: `top_p2_pfft_tmr_no_framebuf_v1`)
 
+`common/rtl/` holds the RTL shared by several designs (the arithmetic/utility
+modules in `fft_common.sv`, the twiddle ROM, the datapath skeletons, the
+protection primitives, the SubFFT merge-stage TMR wrappers, and the arithmetic
+syndrome-apply block). Each design's file set is listed in its own `README.md`
+and, machine-readably, in `common/filelists/<design>.f` (paths are relative to
+that directory), so a Tcl/`add_files` script can read the list instead of
+hard-coding it.
+
 `constraints/kernel_clk_125mhz.xdc` provides the 125 MHz clock constraint used
 for the reported kernel timing runs.
 
@@ -58,7 +66,9 @@ timing / power regeneration remains the seven `*_src` kernels above.
 # Generation of Utilization & Power report
 
 - Set up a new project in Vivado 2022.1 for device `xc7vx690tffg1761-2`.
-- Add all `.sv` files from **one** `*_src` directory; set the top module listed above.
+- Add the `.sv` files listed in that design's `README.md` (its own `*_src`
+  directory plus the shared files in `common/rtl/`, i.e. exactly the contents of
+  `common/filelists/<design>.f`); set the top module listed above.
 - Add `constraints/kernel_clk_125mhz.xdc` (or create an equivalent `.xdc`):
 
 ```tcl

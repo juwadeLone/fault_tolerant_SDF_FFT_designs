@@ -8,8 +8,15 @@ Unprotected SubFFT baseline (1024-pt / 4-lane).
 
 ## Source files (add all to the Vivado project)
 
+The full list is also machine-readable in `../common/filelists/S0.f` (relative to that directory), e.g. `read_verilog -sv [...]` from a Tcl script.
+
+In this directory (`S0_subfft_src/`):
+
 - `top_s0_kernel.sv`
-- `datapath_v5.sv`
+
+Shared with the other designs, in `../common/rtl/`:
+
+- `datapath_subfft_v5.sv`
 - `fft_common.sv`
 - `twiddle_rom_1024.sv`
 

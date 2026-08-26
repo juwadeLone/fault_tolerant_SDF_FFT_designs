@@ -35,10 +35,12 @@
 | `common/rtl/uart_rx_simple.sv` | UART 收字节 |
 | `common/rtl/uart_cmd_decoder.sv` | 命令帧解码 |
 | `common/rtl/fi_controller.sv` | ARM/FIRE |
+| `common/rtl/fi_cmd_path.sv` | 串口命令链封装（收字节→解码→ARM/FIRE），五核十个壳共用 |
 | `common/rtl/mem_bitflip_v1.sv` | 注入点 A |
 | `common/rtl/fft_memory_bram_v1.sv` | 带注入口的反馈存储 |
 | `common/rtl/bf_out_bitflip_v1.sv` | 注入点 B |
 | `common/rtl/stim_rom.sv`、`stim_feeder.sv` | 仅被 `top_fi_rom_*` 实例化（片上激励，不是协议） |
+| `common/rtl/fi_stim_source.sv` | `stim_rom`+`stim_feeder` 的封装，`top_fi_rom_*` 共用 |
 | `common/tb/tb_fi_common.svh` | 五核 TB 公共任务 |
 | `wrap/{S1,S2,S3,P1,P2}/top_fi_*.sv` | 串口壳（流输入 + uart_rx） |
 | `wrap/{S1,S2,S3,P1,P2}/top_fi_rom_*.sv` | 串口壳（片上 ROM + uart_rx） |
@@ -59,3 +61,19 @@
 | `fft1024_ft_exp/inject/` | Python 战役，不是串口 RTL |
 
 本包不能单独打开 Vivado 工程；要仿真仍回 `fi_func_sim_v1`。
+
+## 壳的结构（去重后）
+
+十个壳（`top_fi_*` / `top_fi_rom_*`）原来各自重复一份串口命令链，现在都实例化
+`fi_cmd_path`；`top_fi_rom_*` 的片上激励也都实例化 `fi_stim_source`。壳里只剩
+端口、DUT 实例化和这两个（或一个）共用件。
+
+`top_fi_*`（流输入壳）用 `fi_cmd_path #(.TB_OVERRIDE(1'b1))`，即仿真时可从 TB
+层级 `force` 注命令的那条通路。这些 `tb_*` 线现在在 `u_cmd.g_tb` 里，TB 的
+`force` 路径要相应加一层，例如：
+
+```systemverilog
+force u_dut.u_cmd.g_tb.tb_cmd_valid = 1'b1;   // 原为 u_dut.tb_cmd_valid
+```
+
+`top_fi_rom_*` 用 `TB_OVERRIDE=1'b0`（默认），只走串口，行为不变。

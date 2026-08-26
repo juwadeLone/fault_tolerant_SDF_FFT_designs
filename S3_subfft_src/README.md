@@ -8,13 +8,22 @@ SubFFT per-stage online ECC recovery design, with residual compensation removed 
 
 ## Source files (add all to the Vivado project)
 
+The full list is also machine-readable in `../common/filelists/S3.f` (relative to that directory), e.g. `read_verilog -sv [...]` from a Tcl script.
+
+In this directory (`S3_subfft_src/`):
+
 - `top_s3_kernel.sv`
-- `datapath_v5.sv`
+- `ecc_stage4_v5.sv`
+
+Shared with the other designs, in `../common/rtl/`:
+
+- `datapath_subfft_v5.sv`
 - `fft_common.sv`
 - `twiddle_rom_1024.sv`
 - `protection_rtl.sv`
 - `protection_primitives_v5.sv`
-- `ecc_stage4_v5.sv`
+- `tmr_subfft_merge_stages_v5.sv`
+- `arithmetic_apply_from_syndrome_643.sv`
 
 ## Vivado project setup
 

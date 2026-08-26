@@ -8,8 +8,15 @@ PFFT TMR masking design without the large frame buffer (paper resource / timing 
 
 ## Source files (add all to the Vivado project)
 
+The full list is also machine-readable in `../common/filelists/P2.f` (relative to that directory), e.g. `read_verilog -sv [...]` from a Tcl script.
+
+In this directory (`P2_pfft_src/`):
+
 - `top_p2_kernel.sv`
-- `datapath_v5.sv`
+
+Shared with the other designs, in `../common/rtl/`:
+
+- `datapath_pfft_v5.sv`
 - `fft_common.sv`
 - `twiddle_rom_1024.sv`
 - `protection_rtl.sv`
