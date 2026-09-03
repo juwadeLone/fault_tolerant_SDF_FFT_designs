@@ -19,7 +19,7 @@ e806551b8e44c08947fdf441abcd88a09ba6e0012ceae7bfca27330daffab49f  ./P1_pfft_src/
 cabb0f09ebdd296f3e6e15f69a6b29d30b58c855f012ffcd31d83f5db56bfd93  ./P2_pfft_src/README.md
 7d1e208ddce090341bda56a3eab2f68babc0dbc2d7c1ba764d5cc72e281451a4  ./P2_pfft_src/top_p2_kernel.sv
 e806551b8e44c08947fdf441abcd88a09ba6e0012ceae7bfca27330daffab49f  ./P2_pfft_src/twiddle_rom_1024.sv
-fc388db954b6102fffd3522e2dcd753d1c537cb9d52bcdfe1c7d7d6cab650044  ./README.md
+89d0bc1d1c469aa0f3e1ed01f1463e3f9dfd337be9379bf18b7ea7b7fb7abf9d  ./README.md
 c99310a496877d743e56db716096efa7d37882ab57bf287f475f0795207102c5  ./S0_subfft_src/datapath_v5.sv
 6b6fb11aa993c72e79bdc75fd804a89c15771e49dd536d965d1f12423bb54dfb  ./S0_subfft_src/fft_common.sv
 af09571060b1ad83ef78e13e7534ad5bc534e71fbd4f63d64253e0b7bc561f8f  ./S0_subfft_src/README.md
@@ -55,8 +55,7 @@ ab0219630cf498fff67ea3268fd8eb3d9719dfc4800ad37b75c2993c4b7d688c  ./uart_fi/comm
 b50f04a0395a8b3a7f0b55197f0bbd2b2bec620411a26079472ef94ca7ccab90  ./uart_fi/common/rtl/stim_rom.sv
 a52e4c19d443280a4b5bdc3c963a89d596811838c93a70ad11c84742c1c38b85  ./uart_fi/common/rtl/uart_cmd_decoder.sv
 d9d7c69c47f944a4783854dc8d4e1ea20c8eb964fc966a99fad02e18b188f9cb  ./uart_fi/common/rtl/uart_rx_simple.sv
-f9edf42ee5848841995966ba80c09965ae9334c548b6585446bd6afa057cad91  ./uart_fi/README.md
-655a2c9f189c11708dbe5910d92358fd6a2f154dd58202677300186c2b5cf6cb  ./uart_fi/SOURCE_README.md
+b136c5c03335ec1ee42dedbd5aa3ab10a4956b2d8f50b6a26f40650a54e07dcd  ./uart_fi/README.md
 ee20981b7e2e4cebfc697c7d1202ce750a3fa42123ac07395e7b1b02a581f381  ./uart_fi/wrap/P1/top_fi_p1.sv
 a7bbe9aef3109e9bb402be1c61fe28f956795c72536f7440e16ad22ecb6b8293  ./uart_fi/wrap/P1/top_fi_rom_p1.sv
 4192d0ca4534802bc8eda9243cafe0c3b56510429652f590ba749767c1affdf0  ./uart_fi/wrap/P2/top_fi_p2.sv
@@ -67,4 +66,3 @@ e82e58683ddaf2732cb6cf1078dbd2dc158c990cd3eea4a276946abfef51ea77  ./uart_fi/wrap
 2a97e8f6d4b742148ba5b6b0c2882c7f995fe1eb6f7f4502409b6a682316762e  ./uart_fi/wrap/S2/top_fi_s2.sv
 f67c9cb1d858dc1f5e9073754546e255d4475b76a84d69d872814fe4ee0075e8  ./uart_fi/wrap/S3/top_fi_rom_s3.sv
 a9cec59af74e111d489f0d139ef53e305f3c0b2f44b267e7a2fba85ae658dfa7  ./uart_fi/wrap/S3/top_fi_s3.sv
-6025424df0ac4d15389bf7da0cab1dcf27cbc31b1ef883759db2e26ebc1f0cc1  ./UPLOAD.md

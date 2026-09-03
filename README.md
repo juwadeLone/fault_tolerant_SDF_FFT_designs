@@ -4,11 +4,11 @@ This repository includes the source code of the fault-tolerant designs of
 1024-point / 4-lane / 10-stage parallel streaming SDF FFTs (SubFFT S0–S3 and
 PFFT P0–P2), written in SystemVerilog.
 
-The code is for the paper: Zhu Ao, Guang-Cai Sun, Yuhui Deng, Jixiang Xiang,
+The code is for the paper: Ao Zhu, Guang-Cai Sun, Yuhui Deng, Jixiang Xiang,
 Jianrong Ou, Yu Zhang, and Mengdao Xing, "Resource-Efficient Per-Stage Online
-Recovery for Concurrent Inter-Stage Errors in Parallel Streaming SDF FFTs on
-SRAM-Based FPGAs," under review in IEEE Transactions on Circuits and Systems I:
-Regular Papers.
+Recovery from Multiple Inter-Stage Faults in Parallel SDF FFTs on FPGAs via
+Operator Homogeneity," under review in IEEE Transactions on Circuits and
+Systems I: Regular Papers.
 
 # Dependencies
 
@@ -72,14 +72,6 @@ set_false_path -from [get_ports rst]
   power reports).
 - After Implementation completes, use Flow Navigator → Report Utilization,
   Report Timing Summary, and Report Power.
-
-# What is intentionally not included
-
-- Full Vivado `.xpr` / `.runs` / bitstream packages
-- iverilog simulation testbenches, fault-site lists, and Python campaign
-  scripts / logs (the `uart_fi/` on-board injection chain **is** included)
-
-(Same delivery scope as typical TCAS-I companion RTL releases.)
 
 # License
 
